@@ -6,5 +6,6 @@
   :java-source-paths ["src-java"]
   :aot [clojure-jni-example.core]
   :jar-name "clojure-jni-example.jar"
+  :auto-clean false
   :uberjar-name "clojure-jni-example-standalone.jar"
   :main clojure-jni-example.core)

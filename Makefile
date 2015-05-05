@@ -1,33 +1,42 @@
 .PHONY: run clean
 
 JAVA_HOME=$(shell update-java-alternatives -l | cut -f 3- -d ' ')
-JAR_NAME=target/clojure-jni-example-standalone.jar
-LIB_NAME=jni/libtest.so
+JNI_DIR=target/jni
+CLASS_DIR=target/classes
+CLASS_NAME=Test
+CLASS_FILE=$(CLASS_DIR)/$(CLASS_NAME).class
+JAR_FILE=target/clojure-jni-example-standalone.jar
+LIB_FILE=$(JNI_DIR)/libtest.so
+JAVA_FILE=src-java/Test.java
+C_FILE=src-c/Test.c
+C_HEADER=$(JNI_DIR)/Test.h
 INCLUDE_DIRS=$(shell find $(JAVA_HOME)/include -type d)
-INCLUDE_ARGS=$(INCLUDE_DIRS:%=-I%)
-C_FILES=src-c/Test.c
-C_HEADER=src-c/Test.h
+INCLUDE_ARGS=$(INCLUDE_DIRS:%=-I%) -I$(JNI_DIR)
 
-run: jni/libtest.so $(JAR_NAME)
-	java -jar $(JAR_NAME)
+run: $(LIB_FILE) $(JAR_FILE)
+	java -jar $(JAR_FILE)
 
-$(JAR_NAME): target/classes/Test.class src-c/Test.h
+jar: $(JAR_FILE)
+
+$(JAR_FILE): $(CLASS_FILE) $(C_HEADER)
 	lein uberjar
 
-target/classes/Test.class: src-java/Test.java
+$(CLASS_FILE): $(JAVA_FILE)
 	lein javac
 
-$(C_HEADER): target/classes/Test.class
-	mkdir -p jni
-	javah -o $(C_HEADER) -cp target/classes Test
+header: $(C_HEADER)
+
+$(C_HEADER): $(CLASS_FILE)
+	mkdir -p $(JNI_DIR)
+	javah -o $(C_HEADER) -cp $(CLASS_DIR) $(CLASS_NAME)
 	@touch $(C_HEADER)
 
-$(LIB_NAME): $(C_FILES) $(C_HEADER)
-	$(CC) $(INCLUDE_ARGS) -shared $(C_FILES) -o $(LIB_NAME) -fPIC
+lib: $(LIB_FILE)
 
+$(LIB_FILE): $(C_FILE) $(C_HEADER)
+	$(CC) $(INCLUDE_ARGS) -shared $(C_FILE) -o $(LIB_FILE) -fPIC
 
 clean:
 	lein clean
-	rm -rf jni/
-	rm $(C_HEADER)
+	rm -rf $(JNI_DIR)
 
