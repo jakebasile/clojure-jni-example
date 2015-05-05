@@ -1,16 +1,17 @@
 .PHONY: run clean
 
+JAVA_HOME=$(shell update-java-alternatives -l | cut -f 3- -d ' ')
 JAR_NAME=target/clojure-jni-example-standalone.jar
 LIB_NAME=jni/libtest.so
-C_FILES=src-c/test.c
-C_HEADER=src-c/test.h
 INCLUDE_DIRS=$(shell find $(JAVA_HOME)/include -type d)
 INCLUDE_ARGS=$(INCLUDE_DIRS:%=-I%)
+C_FILES=src-c/Test.c
+C_HEADER=src-c/Test.h
 
 run: jni/libtest.so $(JAR_NAME)
 	java -jar $(JAR_NAME)
 
-$(JAR_NAME): target/classes/Test.class src-c/test.h
+$(JAR_NAME): target/classes/Test.class src-c/Test.h
 	lein uberjar
 
 target/classes/Test.class: src-java/Test.java
@@ -22,7 +23,8 @@ $(C_HEADER): target/classes/Test.class
 	@touch $(C_HEADER)
 
 $(LIB_NAME): $(C_FILES) $(C_HEADER)
-	$(CC) $(INCLUDE_ARGS) -shared $(C_FILES) -o $(LIB_NAME)
+	$(CC) $(INCLUDE_ARGS) -shared $(C_FILES) -o $(LIB_NAME) -fPIC
+
 
 clean:
 	lein clean

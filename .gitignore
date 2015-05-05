@@ -9,3 +9,4 @@ pom.xml.asc
 /.nrepl-port
 jni/
 src-c/test.h
+src-c/Test.h
