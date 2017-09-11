@@ -21,6 +21,17 @@ Loading C library from Java!
 Hello from C!
 ```
 
+### Without Docker
+
+You'll need:
+
+- A full JDK with headers (e.g. openjdk-8-jdk-devel)
+- GCC
+- GNU Make
+- Leiningen
+
+You should be able to simply run `make` once those are in place.
+
 ## Gotchas
 
 1. I couldn't get `System.loadLibrary` to work with my shared library. I am unsure if this is by design or not.
