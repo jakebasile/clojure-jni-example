@@ -1,11 +1,10 @@
 .PHONY: run clean
 
-JAVA_HOME=$(shell update-java-alternatives -l | cut -f 3- -d ' ')
 JNI_DIR=target/jni
 CLASS_DIR=target/classes
 CLASS_NAME=Test
 CLASS_FILE=$(CLASS_DIR)/$(CLASS_NAME).class
-JAR_FILE=target/clojure-jni-example-standalone.jar
+JAR_FILE=target/out-standalone.jar
 LIB_FILE=$(JNI_DIR)/libtest.so
 JAVA_FILE=src-java/Test.java
 C_FILE=src-c/Test.c
@@ -39,4 +38,3 @@ $(LIB_FILE): $(C_FILE) $(C_HEADER)
 clean:
 	lein clean
 	rm -rf $(JNI_DIR)
-
