@@ -32,6 +32,20 @@ You'll need:
 
 You should be able to simply run `make` once those are in place.
 
+## Explanation
+
+JNI works in a few steps.
+
+1. Compile a Java file with `native` methods to a `.class` file.
+2. Generate a C header with `javah`.
+3. Use that header in a `.c` file. This is the entrypoint into native code from your JVM code.
+4. Compile your C code into a shared library.
+5. Compile your JVM code into a JAR.
+
+You use the methods definted in the wrapper Java class to call into native code. When you run the JAR Java will try to find the shared lib, and if it does it'll call the code as needed.
+
+For Clojure, there's just the additional step of Java interop.
+
 ## Gotchas
 
 1. I couldn't get `System.loadLibrary` to work with my shared library. I am unsure if this is by design or not.
