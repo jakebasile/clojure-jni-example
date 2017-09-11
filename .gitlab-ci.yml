@@ -1,0 +1,38 @@
+image: docker:latest
+
+services:
+  - docker:dind
+
+variables:
+  DOCKER_DRIVER: overlay2
+  SHA_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+  RELEASE_IMAGE: $CI_REGISTRY_IMAGE:latest
+
+before_script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+
+stages:
+  - build
+  - test
+  - release
+
+build:
+  stage: build
+  script:
+    - docker build -t $SHA_IMAGE .
+    - docker push $SHA_IMAGE
+
+test:
+  stage: test
+  script:
+    - docker pull $SHA_IMAGE
+    - docker run --rm $SHA_IMAGE
+
+release:
+  stage: release
+  script:
+    - docker pull $SHA_IMAGE
+    - docker tag $SHA_IMAGE $RELEASE_IMAGE
+    - docker push $RELEASE_IMAGE
+  only:
+    - master
