@@ -18,7 +18,7 @@ you should see:
 ```
 Hello from Clojure!
 Loading C library from Java!
-Hello from C!
+Hello from C, User!
 ```
 
 ### Without Docker

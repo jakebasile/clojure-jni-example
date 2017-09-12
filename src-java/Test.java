@@ -7,5 +7,5 @@ public class Test {
         System.load(System.getProperty("user.dir") + "/target/jni/libtest.so");
     }
 
-    public static native void print();
+    public static native String print(String name);
 }

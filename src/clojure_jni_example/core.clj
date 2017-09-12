@@ -4,4 +4,4 @@
 (defn -main
   []
   (println "Hello from Clojure!")
-  (Test/print))
+  (Test/print "User"))
